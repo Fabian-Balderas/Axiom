@@ -1,0 +1,11 @@
+def run(context, args):
+    print("\nAvailable Commands")
+    print("------------------")
+    print("help")
+    print("status")
+    print("version")
+    print("remember")
+    print("recall")
+    print("memories")
+    print("exit")
+    print("forget")
