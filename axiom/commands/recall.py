@@ -1,14 +1,23 @@
-def run(context, args):
+from axiom.core.command import Command
 
-    if len(args) < 1:
-        print("Usage: recall <key>")
-        return
 
-    key = args[0]
+class RecallCommand(Command):
 
-    value = context.memory.recall(key)
+    name = "recall"
+    description = "Retrieve a value from memory."
+    usage = "recall <key>"
 
-    if value is None:
-        print(f'No memory found for "{key}"')
-    else:
-        print(f'{key} = {value}')
+    def run(self, context, args):
+
+        if len(args) < 1:
+            print(f"Usage: {self.usage}")
+            return
+
+        key = args[0]
+
+        value = context.memory.recall(key)
+
+        if value is None:
+            print(f'No memory found for "{key}"')
+        else:
+            print(f"{key} = {value}")

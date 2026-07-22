@@ -1,8 +1,9 @@
 COMMANDS = {}
 
 
-def register(name, handler):
+def register(command):
     """
     Register a command with Axiom.
     """
-    COMMANDS[name] = handler
+
+    COMMANDS[command.name] = command

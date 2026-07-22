@@ -1,40 +1,45 @@
-def run(context, args):
+from axiom.core.command import Command
 
-    if len(args) == 0:
-        print("Usage:")
-        print("  project open <name>")
-        print("  project status")
-        print("  project close")
-        return
 
-    action = args[0].lower()
+class ProjectCommand(Command):
 
-    if action == "open":
+    name = "project"
+    description = "Manage the current project."
+    usage = "project <open|status|close>"
 
-        if len(args) < 2:
-            print("Usage: project open <name>")
+    def run(self, context, args):
+
+        if len(args) == 0:
+            print("Usage:")
+            print("  project open <name>")
+            print("  project status")
+            print("  project close")
             return
 
-        project_name = " ".join(args[1:])
-        context.projects.open(project_name)
+        action = args[0].lower()
 
-        print(f'Current project set to "{project_name}"')
+        if action == "open":
 
-    elif action == "status":
+            if len(args) < 2:
+                print("Usage: project open <name>")
+                return
 
-        if context.projects.has_project():
-            print(f'Current project: {context.projects.current()}')
+            project_name = " ".join(args[1:])
+            context.projects.open(project_name)
+
+            print(f'Current project set to "{project_name}"')
+
+        elif action == "status":
+
+            if context.projects.has_project():
+                print(f'Current project: {context.projects.current()}')
+            else:
+                print("No project is currently open.")
+
+        elif action == "close":
+
+            context.projects.close()
+            print("Project closed.")
+
         else:
-            print("No project is currently open.")
-
-    elif action == "close":
-
-        context.projects.close()
-        print("Project closed.")
-
-    else:
-        print(f'Unknown project command: "{action}"')
-
-    from axiom.core.registry import register
-
-    register("project", run)
+            print(f'Unknown project command: "{action}"')

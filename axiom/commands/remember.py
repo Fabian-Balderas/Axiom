@@ -1,12 +1,21 @@
-def run(context, args):
+from axiom.core.command import Command
 
-    if len(args) < 2:
-        print("Usage: remember <key> <value>")
-        return
 
-    key = args[0]
-    value = " ".join(args[1:])
+class RememberCommand(Command):
 
-    context.memory.remember(key, value)
+    name = "remember"
+    description = "Store a key/value pair in memory."
+    usage = "remember <key> <value>"
 
-    print(f'Stored "{key}" = "{value}"')
+    def run(self, context, args):
+
+        if len(args) < 2:
+            print(f"Usage: {self.usage}")
+            return
+
+        key = args[0]
+        value = " ".join(args[1:])
+
+        context.memory.remember(key, value)
+
+        print(f'Stored "{key}" = "{value}"')

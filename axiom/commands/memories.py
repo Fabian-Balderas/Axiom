@@ -1,13 +1,22 @@
-def run(context, args):
+from axiom.core.command import Command
 
-    memories = context.memory.list()
 
-    if not memories:
-        print("No memories stored.")
-        return
+class MemoriesCommand(Command):
 
-    print("\nStored Memories")
-    print("----------------")
+    name = "memories"
+    description = "Display all stored memories."
+    usage = "memories"
 
-    for key, value in memories.items():
-        print(f"{key}: {value}")
+    def run(self, context, args):
+
+        memories = context.memory.list()
+
+        if not memories:
+            print("No memories stored.")
+            return
+
+        print("\nStored Memories")
+        print("----------------")
+
+        for key, value in memories.items():
+            print(f"{key}: {value}")
