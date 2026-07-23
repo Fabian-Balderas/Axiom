@@ -16,3 +16,5 @@ class Symbol:
     docstring: str = ""
 
     methods: list[str] = field(default_factory=list)
+
+    parameters: list[str] = field(default_factory=list)

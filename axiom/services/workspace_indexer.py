@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import ast
 
+from axiom.services.knowledge_graph import KnowledgeGraph
 from axiom.services.symbol import Symbol
 from axiom.services.symbol_index import SymbolIndex
 
@@ -31,6 +32,7 @@ class WorkspaceIndexer:
     def __init__(self):
         self.files: list[FileInfo] = []
         self.symbol_index = SymbolIndex()
+        self.knowledge_graph = KnowledgeGraph()
 
     def build_index(self, root: Path):
         """
@@ -39,6 +41,7 @@ class WorkspaceIndexer:
 
         self.files.clear()
         self.symbol_index.clear()
+        self.knowledge_graph.clear()
 
         ignored_dirs = {
             "__pycache__",
@@ -109,6 +112,14 @@ class WorkspaceIndexer:
                         if isinstance(child, ast.FunctionDef)
                     ]
 
+                    # Build Knowledge Graph relationships
+                    for method in methods:
+                        self.knowledge_graph.add_relationship(
+                            source=node.name,
+                            kind="contains",
+                            target=method,
+                        )
+
                     symbol = Symbol(
                         name=node.name,
                         kind="class",
@@ -125,12 +136,18 @@ class WorkspaceIndexer:
 
                     docstring = ast.get_docstring(node) or ""
 
+                    parameters = [
+                        arg.arg
+                        for arg in node.args.args
+                    ]
+
                     symbol = Symbol(
                         name=node.name,
                         kind="function",
                         file=file_info.path,
                         line=node.lineno,
                         docstring=docstring,
+                        parameters=parameters,
                     )
 
                     self.symbol_index.add(symbol)

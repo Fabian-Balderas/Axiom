@@ -44,4 +44,12 @@ class InspectCommand(Command):
             for method in symbol.methods:
                 print(f"{method}()")
 
+        if symbol.parameters:
+            print()
+            print("Parameters")
+            print("----------")
+
+            for parameter in symbol.parameters:
+                print(parameter)
+
         print()
