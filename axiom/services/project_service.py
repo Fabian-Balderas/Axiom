@@ -1,7 +1,11 @@
+from pathlib import Path
+
 class ProjectService:
 
     def __init__(self):
         self.current_project = None
+
+        self.projects_directory = Path("projects")
 
     def open(self, name):
         self.current_project = name
