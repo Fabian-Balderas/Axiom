@@ -36,4 +36,12 @@ class InspectCommand(Command):
             print("-------------")
             print(symbol.docstring)
 
+        if symbol.methods:
+            print()
+            print("Methods")
+            print("-------")
+
+            for method in symbol.methods:
+                print(f"{method}()")
+
         print()

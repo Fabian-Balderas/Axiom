@@ -103,12 +103,19 @@ class WorkspaceIndexer:
 
                     docstring = ast.get_docstring(node) or ""
 
+                    methods = [
+                        child.name
+                        for child in node.body
+                        if isinstance(child, ast.FunctionDef)
+                    ]
+
                     symbol = Symbol(
                         name=node.name,
                         kind="class",
                         file=file_info.path,
                         line=node.lineno,
                         docstring=docstring,
+                        methods=methods,
                     )
 
                     self.symbol_index.add(symbol)

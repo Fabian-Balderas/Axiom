@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -14,3 +14,5 @@ class Symbol:
     line: int
 
     docstring: str = ""
+
+    methods: list[str] = field(default_factory=list)
