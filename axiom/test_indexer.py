@@ -1,9 +1,7 @@
 from pathlib import Path
-
 from services.workspace_indexer import WorkspaceIndexer
 
 indexer = WorkspaceIndexer()
-
 indexer.build_index(Path("."))
 
 print(f"Indexed {len(indexer.files)} files.\n")
@@ -32,3 +30,13 @@ for file in results:
         print(f"  - {imp}")
 
     print("=" * 60)
+
+print()
+print("=== Symbol Index ===")
+
+for symbol in indexer.symbol_index.symbols:
+    print(
+        f"{symbol.kind:<10} "
+        f"{symbol.name:<30} "
+        f"{symbol.file.name}:{symbol.line}"
+    )

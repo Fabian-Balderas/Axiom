@@ -4,6 +4,8 @@ import os
 import ast
 
 from services.symbol import Symbol
+from services.symbol_index import SymbolIndex
+
 
 @dataclass
 class FileInfo:
@@ -28,6 +30,7 @@ class WorkspaceIndexer:
 
     def __init__(self):
         self.files: list[FileInfo] = []
+        self.symbol_index = SymbolIndex()
 
     def build_index(self, root: Path):
         """
@@ -35,6 +38,7 @@ class WorkspaceIndexer:
         """
 
         self.files.clear()
+        self.symbol_index.clear()
 
         ignored_dirs = {
             "__pycache__",
@@ -65,8 +69,6 @@ class WorkspaceIndexer:
                     size=full_path.stat().st_size,
                 )
 
-                # Future step:
-                # If this is a Python file, extract symbols.
                 if full_path.suffix == ".py":
                     self.parse_python_file(file_info)
 
@@ -92,12 +94,20 @@ class WorkspaceIndexer:
 
         try:
             source = file_info.path.read_text(encoding="utf-8")
-
             tree = ast.parse(source)
 
             for node in ast.walk(tree):
 
                 if isinstance(node, ast.ClassDef):
+
+                    symbol = Symbol(
+                        name=node.name,
+                        kind="class",
+                        file=file_info.path,
+                        line=node.lineno,
+                    )
+
+                    self.symbol_index.add(symbol)
                     file_info.classes.append(node.name)
 
                 elif isinstance(node, ast.FunctionDef):
