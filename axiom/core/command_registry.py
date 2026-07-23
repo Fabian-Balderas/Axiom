@@ -1,5 +1,5 @@
 # Import commands so they register themselves.
-from axiom.commands import project
+from axiom.commands.find import FindCommand
 from axiom.commands.status import StatusCommand
 from axiom.commands.version import VersionCommand
 from axiom.commands.help import HelpCommand
@@ -19,3 +19,4 @@ register(RecallCommand())
 register(ForgetCommand())
 register(MemoriesCommand())
 register(ProjectCommand())
+register(FindCommand())

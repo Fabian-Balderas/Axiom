@@ -3,8 +3,8 @@ from pathlib import Path
 import os
 import ast
 
-from services.symbol import Symbol
-from services.symbol_index import SymbolIndex
+from axiom.services.symbol import Symbol
+from axiom.services.symbol_index import SymbolIndex
 
 
 @dataclass
@@ -111,6 +111,15 @@ class WorkspaceIndexer:
                     file_info.classes.append(node.name)
 
                 elif isinstance(node, ast.FunctionDef):
+
+                    symbol = Symbol(
+                        name=node.name,
+                        kind="function",
+                        file=file_info.path,
+                        line=node.lineno,
+                    )
+
+                    self.symbol_index.add(symbol)
                     file_info.functions.append(node.name)
 
                 elif isinstance(node, ast.Import):

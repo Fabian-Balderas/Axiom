@@ -19,7 +19,11 @@ def command_loop(context):
             print("Shutting down Axiom...")
             break
 
-        handler = COMMANDS[command]
+        handler = COMMANDS.get(command)
+
+        if handler is None:
+            print(f"Unknown command: {command}")
+            continue
 
         if callable(handler):
             handler(context, args)

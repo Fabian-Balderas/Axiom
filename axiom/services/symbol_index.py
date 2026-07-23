@@ -15,11 +15,16 @@ class SymbolIndex:
     def clear(self):
         self.symbols.clear()
 
-    def find(self, name: str) -> list[Symbol]:
-        name = name.lower()
+    def find_symbol(self, query: str) -> list[Symbol]:
+        """
+        Return all symbols whose names contain the query.
+        Search is case-insensitive.
+        """
+
+        query = query.lower()
 
         return [
             symbol
             for symbol in self.symbols
-            if name in symbol.name.lower()
+            if query in symbol.name.lower()
         ]
