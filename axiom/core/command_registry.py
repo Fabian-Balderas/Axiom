@@ -9,6 +9,7 @@ from axiom.commands.recall import RecallCommand
 from axiom.commands.forget import ForgetCommand
 from axiom.commands.memories import MemoriesCommand
 from axiom.commands.project import ProjectCommand
+from axiom.commands.inspect import InspectCommand
 
 
 register(HelpCommand())
@@ -20,3 +21,4 @@ register(ForgetCommand())
 register(MemoriesCommand())
 register(ProjectCommand())
 register(FindCommand())
+register(InspectCommand())

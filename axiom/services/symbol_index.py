@@ -28,3 +28,17 @@ class SymbolIndex:
             for symbol in self.symbols
             if query in symbol.name.lower()
         ]
+
+    def get_symbol(self, name: str) -> Symbol | None:
+        """
+        Return the first symbol whose name exactly matches.
+        Search is case-insensitive.
+        """
+
+        name = name.lower()
+
+        for symbol in self.symbols:
+            if symbol.name.lower() == name:
+                return symbol
+
+        return None

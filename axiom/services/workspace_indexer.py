@@ -89,7 +89,8 @@ class WorkspaceIndexer:
 
     def parse_python_file(self, file_info: FileInfo):
         """
-        Extract classes, functions, and imports from a Python source file.
+        Extract classes, functions, imports, and docstrings
+        from a Python source file.
         """
 
         try:
@@ -100,11 +101,14 @@ class WorkspaceIndexer:
 
                 if isinstance(node, ast.ClassDef):
 
+                    docstring = ast.get_docstring(node) or ""
+
                     symbol = Symbol(
                         name=node.name,
                         kind="class",
                         file=file_info.path,
                         line=node.lineno,
+                        docstring=docstring,
                     )
 
                     self.symbol_index.add(symbol)
@@ -112,11 +116,14 @@ class WorkspaceIndexer:
 
                 elif isinstance(node, ast.FunctionDef):
 
+                    docstring = ast.get_docstring(node) or ""
+
                     symbol = Symbol(
                         name=node.name,
                         kind="function",
                         file=file_info.path,
                         line=node.lineno,
+                        docstring=docstring,
                     )
 
                     self.symbol_index.add(symbol)

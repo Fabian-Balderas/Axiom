@@ -12,3 +12,5 @@ class Symbol:
     kind: str
     file: Path
     line: int
+
+    docstring: str = ""
