@@ -173,3 +173,21 @@ class PythonAstVisitor(ast.NodeVisitor):
             )
 
         self.generic_visit(node)
+
+    def visit_Name(self, node):
+        """
+        Records symbol references inside functions.
+        """
+
+        # Ignore names outside functions.
+        if self.current_function is None:
+            self.generic_visit(node)
+            return
+
+        self.workspace.knowledge_graph.add_relationship(
+            source=self.current_function,
+            kind=RelationshipType.REFERENCES,
+            target=node.id,
+        )
+
+        self.generic_visit(node)

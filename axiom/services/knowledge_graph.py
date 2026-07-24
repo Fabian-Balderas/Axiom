@@ -23,15 +23,21 @@ class KnowledgeGraph:
     ):
         """
         Add a relationship between two symbols.
+
+        Duplicate relationships are ignored.
         """
 
-        self.graph[source].append(
-            Relationship(
-                source=source,
-                kind=kind,
-                target=target,
-            )
+        relationship = Relationship(
+            source=source,
+            kind=kind,
+            target=target,
         )
+
+        # Prevent duplicate edges.
+        if relationship in self.graph[source]:
+            return
+
+        self.graph[source].append(relationship)
 
     def get_relationships(
         self,

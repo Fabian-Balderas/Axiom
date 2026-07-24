@@ -1,3 +1,4 @@
+from axiom.analysis.trace_node import TraceNode
 from axiom.services.relationship_type import RelationshipType
 
 
@@ -11,10 +12,32 @@ class Tracer:
 
     def trace(self, symbol):
         """
-        Return every function directly called by a symbol.
+        Build a trace tree starting at a symbol.
         """
 
-        return self.knowledge_graph.get_relationships(
+        return self._trace(symbol, set())
+
+    def _trace(self, symbol, visited):
+
+        node = TraceNode(symbol)
+
+        if symbol in visited:
+            return node
+
+        visited.add(symbol)
+
+        relationships = self.knowledge_graph.get_relationships(
             source=symbol,
             kind=RelationshipType.CALLS,
         )
+
+        for relationship in relationships:
+
+            child = self._trace(
+                relationship.target,
+                visited.copy(),
+            )
+
+            node.add_child(child)
+
+        return node

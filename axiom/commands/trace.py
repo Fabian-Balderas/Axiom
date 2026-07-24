@@ -1,11 +1,12 @@
 from axiom.core.command import Command
 
 from axiom.analysis.tracer import Tracer
+from axiom.rendering.tree_renderer import TreeRenderer
 
 
 class TraceCommand(Command):
     """
-    Display every function call made by a symbol.
+    Display the complete call tree for a symbol.
     """
 
     name = "trace"
@@ -18,28 +19,17 @@ class TraceCommand(Command):
             print("Usage: trace <symbol>")
             return
 
-        name = " ".join(args)
+        symbol = " ".join(args)
 
         tracer = Tracer(
             context.workspace.knowledge_graph
         )
 
-        relationships = tracer.trace(name)
-
-        if not relationships:
-            print(f"No calls found for '{name}'.")
-            return
+        tree = tracer.trace(symbol)
 
         print()
-        print(name)
-        print("-" * len(name))
-        print()
-        print("Calls")
 
-        for relationship in sorted(
-            relationships,
-            key=lambda r: r.target.lower(),
-        ):
-            print(f"  ├── {relationship.target}")
+        renderer = TreeRenderer()
+        renderer.render(tree)
 
         print()
