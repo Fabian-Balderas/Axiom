@@ -1,5 +1,5 @@
 from axiom.core.command import Command
-
+from axiom.analysis.semantic_analyzer import SemanticAnalyzer
 from axiom.services.relationship_type import RelationshipType
 
 
@@ -19,6 +19,10 @@ class InspectCommand(Command):
             return
 
         name = " ".join(args)
+
+        # Future analysis layer
+        analyzer = SemanticAnalyzer(context.workspace)
+        summary = analyzer.summarize_function(name)
 
         symbol = context.workspace.symbol_index.get_symbol(name)
 
@@ -60,6 +64,7 @@ class InspectCommand(Command):
             ("Defines", RelationshipType.DEFINES),
             ("References", RelationshipType.REFERENCES),
             ("Calls", RelationshipType.CALLS),
+            ("Returns", RelationshipType.RETURNS),
             ("Contains", RelationshipType.CONTAINS),
             ("Imports", RelationshipType.IMPORTS),
             ("Inherits", RelationshipType.INHERITS),
