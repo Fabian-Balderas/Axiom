@@ -3,8 +3,8 @@ from pathlib import Path
 import os
 import ast
 
+from axiom.services.python_ast_visitor import PythonAstVisitor
 from axiom.services.knowledge_graph import KnowledgeGraph
-from axiom.services.symbol import Symbol
 from axiom.services.symbol_index import SymbolIndex
 
 
@@ -92,79 +92,15 @@ class WorkspaceIndexer:
 
     def parse_python_file(self, file_info: FileInfo):
         """
-        Extract classes, functions, imports, and docstrings
-        from a Python source file.
+        Parse a Python file using the PythonAstVisitor.
         """
 
         try:
             source = file_info.path.read_text(encoding="utf-8")
             tree = ast.parse(source)
 
-            for node in ast.walk(tree):
-
-                if isinstance(node, ast.ClassDef):
-
-                    docstring = ast.get_docstring(node) or ""
-
-                    methods = [
-                        child.name
-                        for child in node.body
-                        if isinstance(child, ast.FunctionDef)
-                    ]
-
-                    # Build Knowledge Graph relationships
-                    for method in methods:
-                        self.knowledge_graph.add_relationship(
-                            source=node.name,
-                            kind="contains",
-                            target=method,
-                        )
-
-                    symbol = Symbol(
-                        name=node.name,
-                        kind="class",
-                        file=file_info.path,
-                        line=node.lineno,
-                        docstring=docstring,
-                        methods=methods,
-                    )
-
-                    self.symbol_index.add(symbol)
-                    file_info.classes.append(node.name)
-
-                elif isinstance(node, ast.FunctionDef):
-
-                    docstring = ast.get_docstring(node) or ""
-
-                    parameters = [
-                        arg.arg
-                        for arg in node.args.args
-                    ]
-
-                    symbol = Symbol(
-                        name=node.name,
-                        kind="function",
-                        file=file_info.path,
-                        line=node.lineno,
-                        docstring=docstring,
-                        parameters=parameters,
-                    )
-
-                    self.symbol_index.add(symbol)
-                    file_info.functions.append(node.name)
-
-                elif isinstance(node, ast.Import):
-                    for alias in node.names:
-                        file_info.imports.append(alias.name)
-
-                elif isinstance(node, ast.ImportFrom):
-                    module = node.module or ""
-
-                    for alias in node.names:
-                        if module:
-                            file_info.imports.append(f"{module}.{alias.name}")
-                        else:
-                            file_info.imports.append(alias.name)
+            visitor = PythonAstVisitor(self, file_info)
+            visitor.visit(tree)
 
         except Exception:
             # Skip files that cannot be parsed.

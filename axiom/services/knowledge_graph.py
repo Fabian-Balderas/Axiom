@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from axiom.services.relationship import Relationship
+from axiom.services.relationship_type import RelationshipType
 
 
 class KnowledgeGraph:
@@ -17,7 +18,7 @@ class KnowledgeGraph:
     def add_relationship(
         self,
         source: str,
-        kind: str,
+        kind: RelationshipType,
         target: str,
     ):
         """
@@ -34,10 +35,36 @@ class KnowledgeGraph:
 
     def get_relationships(
         self,
-        source: str,
+        source: str | None = None,
+        kind: RelationshipType | None = None,
+        target: str | None = None,
     ) -> list[Relationship]:
         """
-        Return every relationship originating from a symbol.
+        Return relationships matching the supplied filters.
+
+        Any filter may be omitted.
         """
 
-        return self.graph.get(source, [])
+        relationships: list[Relationship] = []
+
+        if source is not None:
+            relationships.extend(self.graph.get(source, []))
+        else:
+            for rels in self.graph.values():
+                relationships.extend(rels)
+
+        if kind is not None:
+            relationships = [
+                rel
+                for rel in relationships
+                if rel.kind == kind
+            ]
+
+        if target is not None:
+            relationships = [
+                rel
+                for rel in relationships
+                if rel.target == target
+            ]
+
+        return relationships
