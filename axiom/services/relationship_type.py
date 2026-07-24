@@ -11,3 +11,5 @@ class RelationshipType(str, Enum):
     INHERITS = "inherits"
     CALLS = "calls"
     REFERENCES = "references"
+
+    DEFINES = "defines"

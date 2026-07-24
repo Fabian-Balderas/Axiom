@@ -191,3 +191,25 @@ class PythonAstVisitor(ast.NodeVisitor):
         )
 
         self.generic_visit(node)
+
+    def visit_Assign(self, node):
+        """
+        Records variables defined by assignment.
+        """
+
+        # Ignore assignments outside functions.
+        if self.current_function is None:
+            self.generic_visit(node)
+            return
+
+        for target in node.targets:
+
+            if isinstance(target, ast.Name):
+
+                self.workspace.knowledge_graph.add_relationship(
+                    source=self.current_function,
+                    kind=RelationshipType.DEFINES,
+                    target=target.id,
+                )
+
+        self.generic_visit(node)
