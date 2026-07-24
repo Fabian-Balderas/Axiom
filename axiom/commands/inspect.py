@@ -1,5 +1,7 @@
 from axiom.core.command import Command
 
+from axiom.services.relationship_type import RelationshipType
+
 
 class InspectCommand(Command):
     """
@@ -42,7 +44,7 @@ class InspectCommand(Command):
             print("-------")
 
             for method in symbol.methods:
-                print(f"{method}()")
+                print(method)
 
         if symbol.parameters:
             print()
@@ -51,5 +53,41 @@ class InspectCommand(Command):
 
             for parameter in symbol.parameters:
                 print(parameter)
+
+        relationships = context.workspace.knowledge_graph
+
+        sections = [
+            ("Defines", RelationshipType.DEFINES),
+            ("References", RelationshipType.REFERENCES),
+            ("Calls", RelationshipType.CALLS),
+            ("Contains", RelationshipType.CONTAINS),
+            ("Imports", RelationshipType.IMPORTS),
+            ("Inherits", RelationshipType.INHERITS),
+        ]
+
+        printed_header = False
+
+        for title, kind in sections:
+
+            rels = relationships.get_relationships(
+                source=symbol.name,
+                kind=kind,
+            )
+
+            if not rels:
+                continue
+
+            if not printed_header:
+                print()
+                print("Relationships")
+                print("-------------")
+                printed_header = True
+
+            print()
+            print(title)
+            print("-" * len(title))
+
+            for rel in rels:
+                print(rel.target)
 
         print()
