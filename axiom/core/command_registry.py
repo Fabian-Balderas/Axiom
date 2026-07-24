@@ -13,6 +13,7 @@ from axiom.commands.inspect import InspectCommand
 from axiom.commands.graph import GraphCommand
 from axiom.commands.trace import TraceCommand
 from axiom.commands.who_calls import WhoCallsCommand
+from axiom.commands.explain import ExplainCommand
 
 register(HelpCommand())
 register(VersionCommand())
@@ -27,6 +28,7 @@ register(InspectCommand())
 register(GraphCommand())
 register(TraceCommand())
 register(WhoCallsCommand())
+register(ExplainCommand())
 
 print("Registered commands:")
 print(sorted(COMMANDS.keys()))

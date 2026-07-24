@@ -1,3 +1,6 @@
+from axiom.analysis.function_summary import FunctionSummary
+
+
 class SemanticAnalyzer:
     """
     Performs higher-level analysis using Axiom's knowledge graph.
@@ -24,22 +27,22 @@ class SemanticAnalyzer:
 
         graph = self.workspace.knowledge_graph
 
-        return {
-            "symbol": symbol,
-            "defines": graph.get_relationships(
+        return FunctionSummary(
+            symbol=symbol,
+            defines=graph.get_relationships(
                 function_name,
                 "defines",
             ),
-            "references": graph.get_relationships(
+            references=graph.get_relationships(
                 function_name,
                 "references",
             ),
-            "calls": graph.get_relationships(
+            calls=graph.get_relationships(
                 function_name,
                 "calls",
             ),
-            "returns": graph.get_relationships(
+            returns=graph.get_relationships(
                 function_name,
                 "returns",
             ),
-        }
+        )
