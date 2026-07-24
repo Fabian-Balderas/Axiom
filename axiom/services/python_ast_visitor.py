@@ -1,5 +1,6 @@
 import ast
 
+from axiom.services.expression_resolver import ExpressionResolver
 from axiom.services.relationship_type import RelationshipType
 from axiom.services.symbol import Symbol
 
@@ -14,6 +15,8 @@ class PythonAstVisitor(ast.NodeVisitor):
         self.file_info = file_info
         self.current_class = None
         self.current_function = None
+
+        self.expression_resolver = ExpressionResolver()
 
     def get_qualified_name(self, node):
         """
@@ -163,7 +166,7 @@ class PythonAstVisitor(ast.NodeVisitor):
             self.generic_visit(node)
             return
 
-        target = self.get_qualified_name(node.func)
+        target = self.expression_resolver.resolve(node.func)
 
         if target:
             self.workspace.knowledge_graph.add_relationship(
@@ -211,5 +214,26 @@ class PythonAstVisitor(ast.NodeVisitor):
                     kind=RelationshipType.DEFINES,
                     target=target.id,
                 )
+
+        self.generic_visit(node)
+
+    def visit_Return(self, node):
+        """
+        Records values returned by a function.
+        """
+
+        # Ignore returns outside functions.
+        if self.current_function is None:
+            self.generic_visit(node)
+            return
+
+        target = self.expression_resolver.resolve(node.value)
+
+        if target:
+            self.workspace.knowledge_graph.add_relationship(
+                source=self.current_function,
+                kind=RelationshipType.RETURNS,
+                target=target,
+            )
 
         self.generic_visit(node)

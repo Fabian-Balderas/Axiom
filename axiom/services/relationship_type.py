@@ -13,3 +13,4 @@ class RelationshipType(str, Enum):
     REFERENCES = "references"
 
     DEFINES = "defines"
+    RETURNS = "returns"
